@@ -27,11 +27,17 @@ app.post("/register", (req, res) => {
     if(!req.body.username && req.body.username.length > 10) errors.push("username must be at most 10 characters."); 
     if(req.body.username && !req.body.username.match(/^[a-zA-Z0-9]+$/)) errors.push("username can only contain letters and numbers.");
 
+    if(!req.body.password) errors.push("you must provide a password.");
+    if(req.body.password && req.body.password.length < 6) errors.push("password must be at least 6 characters.");
+    if(!req.body.password && req.body.password.length > 12) errors.push("password must be at most 12 characters."); 
+
     if(errors.length){
         return res.render("homepage", { errors});
-    }else{
-        res.send("Thank you for registering, ");
     }
+
+    // save the new user into a database
+
+    // log in the user in by giving then a cookie
 
 });
 
