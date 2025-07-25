@@ -1,6 +1,21 @@
 const express = require("express")
 const db = require("better-sqlite3")("blog.db");
 db.pragma("journal_mode = WAL");
+
+
+// database setup starts here
+const createTables = db.transaction(() => {
+    db.prepare(
+        `CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username STRING NOT NULL UNIQUE,
+            password STRING NOT NULL,)`
+    ).run()
+})
+
+createTables();
+
+// database setup ends here
 const app = express();
 
 app.set("view engine", "ejs");
