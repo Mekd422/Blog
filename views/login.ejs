@@ -15,6 +15,14 @@
     </header>
 
     <main>
+        <% if (typeof errors !== "undefined") { %>
+  <ul>
+    <% errors.forEach(error => { %>
+      <li><%= error %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
         <form action="/register" method="POST">
             <fieldset>
             <legend>create an account</legend>
