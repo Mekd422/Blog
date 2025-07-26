@@ -1,3 +1,6 @@
+const dotenv = require("dotenv");
+dotenv.config();
+const jwt = require("jsonwebtoken");
 const express = require("express")
 const bcrypt = require("bcrypt");
 const path = require("path");
@@ -57,11 +60,22 @@ app.post("/register", (req, res) => {
     // save the new user into a database
     const salt = bcrypt.genSaltSync(10);
     req.body.password = bcrypt.hashSync(req.body.password, salt);
-    const ourStatement = db.prepare("INSERT INTO users (username, password) VALUES (?, ?)")
-    ourStatement.run(req.body.username, req.body.password);
+    const ourStatement = db.prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+    
+    const result = ourStatement.run(req.body.username, req.body.password);
+
+    const lookupStatement = db.prepare("SELECT * FROM users WHERE ROWID = ?");
+    const user = lookupStatement.get(result.lastInsertRowid);
 
     // log in the user in by giving then a cookie
-    
+    const token = jwt.sign({ exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, skyColor: "blue", userid: user.id }, process.env.JWTSECRET);
+
+    res.cookie("ourSimpleApp", token,  { 
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
+        secure: true ,
+        sameSite: "strict"}); 
+
     res.send("Thank you");
 
 });
