@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
+const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const express = require("express")
 const bcrypt = require("bcrypt");
@@ -26,6 +27,24 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
+app.use(cookieParser());
+
+app.use((req, res, next) => {
+    res.locals.errors = [];
+
+    //try to decode incoming cookies
+
+    try {
+        const decoded = jwt.verify(req.cookies.ourSimpleApp, process.env.JWTSECRET);
+        req.user = decoded;
+    } catch (error) {
+        req.user = false;
+    }
+
+    res.locals.user = req.user;
+    console.log(req.user);
+    next();
+});
 
 //routes
 app.get("/", (req, res) => {
@@ -68,7 +87,7 @@ app.post("/register", (req, res) => {
     const user = lookupStatement.get(result.lastInsertRowid);
 
     // log in the user in by giving then a cookie
-    const token = jwt.sign({ exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, skyColor: "blue", userid: user.id }, process.env.JWTSECRET);
+    const token = jwt.sign({ exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, skyColor: "blue", userid: user.id, username: user.username }, process.env.JWTSECRET);
 
     res.cookie("ourSimpleApp", token,  { 
         maxAge: 1000 * 60 * 60 * 24,
