@@ -9,6 +9,8 @@ const db = require("better-sqlite3")(path.join(__dirname, "blog.db"));
 db.pragma("journal_mode = WAL");
 
 
+
+
 // database setup starts here
 const createTables = db.transaction(() => {
     db.prepare(
@@ -48,11 +50,18 @@ app.use((req, res, next) => {
 
 //routes
 app.get("/", (req, res) => {
+    if(req.user) {
+        return res.redirect("dashboard");
+    }
     res.render("homepage");
 });
 
 app.get("/login", (req, res) => {
     res.render("login");   
+});
+
+app.get("/dashboard", (req, res) => {
+    res.render("dashboard"); 
 });
 
 app.post("/register", (req, res) => {
