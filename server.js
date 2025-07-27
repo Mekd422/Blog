@@ -64,6 +64,11 @@ app.get("/dashboard", (req, res) => {
     res.render("dashboard"); 
 });
 
+app.get("/logout", (req, res) => {
+    res.clearCookie("ourSimpleApp");
+    res.redirect("/");
+});
+
 app.post("/register", (req, res) => {
     const errors = []
 

@@ -1,24 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<%- include("includes/head") %>
 <body>
-    <header>
-        <h2><a href="/">our wonderful app</a></h2>
-        <nav>
-
-            <% if(user) { %>
-                <a href="/create-post">Create Post</a>
-                <a href="/logout">Log Out</a>
-            <% } else { %>
-                <a href="/login">log in</a>
-                <% } %>
-        </nav>
-    </header>
+    <%- include("includes/header") %>
 
     <main>
         <% if (typeof errors !== "undefined") { %>
@@ -28,24 +12,12 @@
     <% }) %>
   </ul>
 <% } %>
+        <h2>Log In Page</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis perferendis est ut exercitationem! Ex, animi corporis. Unde molestiae cum quidem cupiditate exercitationem vel aliquid tenetur suscipit nulla corporis, voluptatem repellendus.</p>
 
-        <form action="/register" method="POST">
-            <fieldset>
-            <legend>create an account</legend>
-            <label for="username"><small>username</small></label>
-            <input type="text" id="username" name="username" autocomplete="off">
-
-            <label for="password"><small>Password</small></label>
-            <input type="text" id="password" name="password" autocomplete="off">
-
-            <br>
-            <button>sign up</button>
-        </fieldset>
-        </form>
+        
     </main>
 
-    <footer>
-        <small>&copy; our wonderful app</small>
-    </footer>
+    <%- include("includes/footer") %>
 </body>
 </html>
