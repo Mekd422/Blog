@@ -20,6 +20,17 @@ const createTables = db.transaction(() => {
             username TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL)`
     ).run()
+
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS posts(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        createdDate TEXT,
+        title STRING NOT NULL,
+        body TEXT NOT NULL,
+        authorid INTEGER,
+        FOREIGN KEY (authorid) REFERENCES users(id)
+        )
+        `).run()
 })
 
 createTables();
@@ -97,9 +108,15 @@ app.post("/create-post", mustbeloggedin, (req, res) =>{
         return res.render("create-post", {errors})
     }
 
+    // save the post on  the database
+    const ourStatement = db.prepare("INSERT INTO posts (title, body, authorid, createdDate) VALUES (?,?,?,?");
+    const result = ourStatement.run(req.body.title, req.body.body, req.user.userid, new Date().toISOString())
+
+    const getPostStatement = db.prepare("SELECT * FROM posts WHEER ROWID = ?");
+    const realPost = getPostStatement.get(result.lastInsertRowid)
 
 
-
+    res.redirect(`/post/${realPost.id}`)
 })
 
 app.get("/logout", (req, res) => {
