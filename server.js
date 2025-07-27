@@ -64,6 +64,23 @@ app.get("/dashboard", (req, res) => {
     res.render("dashboard"); 
 });
 
+function mustbeloggedin(req, res, next){
+    if(req.user){
+        return next();
+    }
+    return res.redirect("/");
+    next();
+}
+
+app.get("/create-post", mustbeloggedin, (req, res) =>{
+    res.render("create-post")
+
+});
+
+app.post("/create-post", mustbeloggedin, (req, res) =>{
+
+})
+
 app.get("/logout", (req, res) => {
     res.clearCookie("ourSimpleApp");
     res.redirect("/");
