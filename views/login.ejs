@@ -5,17 +5,22 @@
     <%- include("includes/header") %>
 
     <main>
-        <% if (typeof errors !== "undefined") { %>
-  <ul>
-    <% errors.forEach(error => { %>
-      <li><%= error %></li>
-    <% }) %>
-  </ul>
-<% } %>
-        <h2>Log In Page</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis perferendis est ut exercitationem! Ex, animi corporis. Unde molestiae cum quidem cupiditate exercitationem vel aliquid tenetur suscipit nulla corporis, voluptatem repellendus.</p>
+        <form action="/login" method="POST">
+            <% errors.forEach(error => { %>
+                <p class="notice"><%= error %></p>
+            <% }) %>
+            <fieldset>
+            <legend>Log In</legend>
+            <label for="username"><small>username</small></label>
+            <input type="text" id="username" name="username" autocomplete="off">
 
-        
+            <label for="password"><small>Password</small></label>
+            <input type="text" id="password" name="password" autocomplete="off">
+
+            <br>
+            <button>log in</button>
+        </fieldset>
+        </form>
     </main>
 
     <%- include("includes/footer") %>

@@ -68,7 +68,49 @@ app.get("/logout", (req, res) => {
     res.clearCookie("ourSimpleApp");
     res.redirect("/");
 });
+app.post("/login", (req, res) => {
+    let errors = []
 
+    if(typeof req.body.username !== "string") req.body.username = "";
+    if(typeof req.body.password !== "string") req.body.password = "";
+
+    if(req.body.username.trim() === "") {
+        errors = ["you must provide a username."];
+    }
+    if(req.body.password == "") {
+        errors = ["you must provide a password."];
+    }
+
+    if(errors.length) {
+        return res.render("login", { errors });
+    }
+
+    const userInQuestionStatement = db.prepare("SELECT * FROM users WHERE username = ?");
+    const userInQuestion = userInQuestionStatement.get(req.body.username);
+
+    if(!userInQuestion) {
+        errors = ["invalid user/ password"]
+        return res.render("login", {errors});
+    }
+
+    const matchOrNot = bcrypt.compareSync(req.body.password, userInQuestion.password);
+
+    if(!matchOrNot){
+        errors = ["invalid user/ password"]
+        return res.render("login", {errors});
+    }
+
+    const token = jwt.sign({ exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, skyColor: "blue", userid: userInQuestion.id, username: userInQuestion.username }, process.env.JWTSECRET);
+
+    res.cookie("ourSimpleApp", token,  { 
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
+        secure: true ,
+        sameSite: "strict"}); 
+
+    res.redirect("/");
+
+});
 app.post("/register", (req, res) => {
     const errors = []
 
@@ -109,9 +151,11 @@ app.post("/register", (req, res) => {
         secure: true ,
         sameSite: "strict"}); 
 
-    res.send("Thank you");
+    res.redirect("/");
 
 });
+
+
 
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
