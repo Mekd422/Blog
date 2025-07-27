@@ -85,23 +85,24 @@ function mustbeloggedin(req, res, next){
 }
 
 app.get("/create-post", mustbeloggedin, (req, res) =>{
-    const errors = []
-
-    if(typeof req.body.title !== "string") req.body.tile = ""
-    if(typeof req.body.body !== "string") req.body.body = ""
-
-    // trim - sanitize or strip out html
-
-    req.body.title = sanitizeHTML(req.body.title.trim(), {allowedTags: [], allowedAttributes: {}})
-    req.body.body = sanitizeHTML(req.body.body.trim(), {allowedTags: [], allowedAttributes: {}})
-
-    if(!req.body.title) errors.push("you must provide title");
-    if(!req.body.body) errors.push("you must provide content");
-
-    return errors
+    res.render("create-post");
 });
 
 app.post("/create-post", mustbeloggedin, (req, res) =>{
+    // const errors = []
+
+    // if(typeof req.body.title !== "string") req.body.tile = ""
+    // if(typeof req.body.body !== "string") req.body.body = ""
+
+    // // trim - sanitize or strip out html
+
+    // req.body.title = sanitizeHTML(req.body.title.trim(), {allowedTags: [], allowedAttributes: {}})
+    // req.body.body = sanitizeHTML(req.body.body.trim(), {allowedTags: [], allowedAttributes: {}})
+
+    // if(!req.body.title) errors.push("you must provide title");
+    // if(!req.body.body) errors.push("you must provide content");
+
+    // return errors
     const errors = sharedPostValidation(req)
 
     if(errors.length){
